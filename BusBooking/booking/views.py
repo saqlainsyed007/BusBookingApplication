@@ -51,9 +51,13 @@ class ScheduleSearchAPIView(APIView):
             )
 
         field_error_dict = {}
-        if not Location.objects.filter(name=request_data['from_location']):
+        request_locations_available = Location.objects.filter(
+            name__in=[request_data['from_location'], request_data['to_location']]
+        ).values_list('name', flat=True)
+
+        if request_data['from_location'] not in request_locations_available:
             field_error_dict['from_location'] = "From location not found"
-        if not Location.objects.filter(name=request_data['to_location']):
+        if request_data['to_location'] not in request_locations_available:
             field_error_dict['to_location'] = "To location not found"
         if request_data['to_location'] == request_data['from_location']:
             field_error_dict['to_location'] = "To location cannot be same as From location"
