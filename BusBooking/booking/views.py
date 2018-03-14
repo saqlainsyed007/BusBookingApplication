@@ -65,7 +65,7 @@ class ScheduleSearchAPIView(APIView):
             field_error_dict['to_location'] = "To location cannot be same as From location"
         if parse_date(request_data['onward_date']) < datetime.datetime.now().date():
             field_error_dict['onward_date'] = "Onward date cannot be Past"
-        if 'return_date' in request_data:
+        if 'return_date' in request_data and request_data['return_date']:
             if parse_date(request_data['return_date']) < datetime.datetime.now().date():
                 field_error_dict['return_date'] = "Return date cannot be Past"
             elif parse_date(request_data['return_date']) < parse_date(request_data['onward_date']):
