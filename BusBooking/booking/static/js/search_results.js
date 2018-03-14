@@ -24,7 +24,7 @@ var validate_search_parameters = function(form_data) {
   // location entered must be an allowed loction.
   if (
     !form_data['from_location'] ||
-    !locations.includes(form_data['from_location'])
+    locations.indexOf(form_data['from_location']) == -1
   ) {
     set_error_message (
       "from_location",
@@ -35,7 +35,7 @@ var validate_search_parameters = function(form_data) {
 
   if (
       !form_data['to_location'] ||
-      !locations.includes(form_data['to_location'])
+      locations.indexOf(form_data['to_location']) == -1
   ) {
     set_error_message (
       "to_location",
@@ -146,32 +146,15 @@ var get_search_result_item = function(brand, type, ac_available, onward_date, re
     rating_html = rating_html + rating_star;
   }
 
-  let search_result_item = `<div class="row results-row">
-    <div class="col-md-6 results-flex-container">
-      <div class="results-flex-item col-md-6">
-        <p class="brand-name">${brand}</p>
-        <p class="bus-type">${type} | ${ac}</p>
-      </div>
-      <div class="results-flex-item col-md-6">
-        <p class="timings">${onward_time} -> ${return_time}</p>
-        <p class="travel-time">${travel_time}</p>
-      </div>
-    </div>
-    <div class="col-md-6 results-flex-container">
-      <div class="results-flex-item col-md-4">
-        <p class="rating">
-          ${rating_html}
-        </p>
-      </div>
-      <div class="results-flex-item col-md-4">
-        <p class="seats">${seats} seats</p>
-      </div>
-      <div class="results-flex-item col-md-4">
-        <p class="price">INR ${price}</p>
-        <button class="view-seats">View Seats</button>
-      </div>
-    </div>
-  </div>`;
+  let search_result_item = $('#search-result-row').clone();
+  search_result_item.find('.brand-name').text(brand)
+  search_result_item.find('.bus-type').text(type + " | " + ac)
+  search_result_item.find('.timings').text(onward_time + " -> " + return_time)
+  search_result_item.find('.travel-time').text(travel_time)
+  search_result_item.find('.rating').html(rating_html)
+  search_result_item.find('.seats').text(seats)
+  search_result_item.find('.price').text(price)
+  search_result_item.removeClass('hide')
 
   return search_result_item;
 }
@@ -185,7 +168,7 @@ var apply_schedules = function(schedules) {
   $('#search-results-onward').html('');
   $('#search-results-return').html('');
   if (schedules.schedules_onward.length == 0) {
-    empty_schedule_dom = $('#empty-schedule-template').clone();
+    let empty_schedule_dom = $('#empty-schedule-template').clone();
     empty_schedule_dom.removeClass('hide');
     $('#search-results-onward').html(empty_schedule_dom)
   }
@@ -201,14 +184,14 @@ var apply_schedules = function(schedules) {
           schedule['arrival_time'],
           schedule['bus']['rating'],
           schedule['bus']['num_rows'] * (schedule['bus']['num_lcols'] + schedule['bus']['num_rcols']),
-          schedule['price'],
+          schedule['price']
         )
       );
     }
   }
   // Return Schedules
   if (schedules.schedules_return.length == 0) {
-    empty_schedule_dom = $('#empty-schedule-template').clone();
+    let empty_schedule_dom = $('#empty-schedule-template').clone();
     empty_schedule_dom.removeClass('hide');
     $('#search-results-return').html(empty_schedule_dom)
   }
@@ -224,7 +207,7 @@ var apply_schedules = function(schedules) {
           schedule['arrival_time'],
           schedule['bus']['rating'],
           schedule['bus']['num_rows'] * (schedule['bus']['num_lcols'] + schedule['bus']['num_rcols']),
-          schedule['price'],
+          schedule['price']
         )
       );
     }
@@ -330,7 +313,7 @@ $(document).on('submit', '.search-form', function(event) {
     'async': false,
     'success': function(schedules) {
       console.log(schedules);
-      let prices = new Set();
+      let prices = [];
 
       if (!form_data['return_date']) {
         $('.return-button').addClass('disabled');
@@ -344,15 +327,16 @@ $(document).on('submit', '.search-form', function(event) {
       // Collect all prices in a set this will help set range for
       // price filter. Range is set to nearest 100 for both limits.
       for (let index in schedules['schedules_onward']) {
-        prices.add(schedules['schedules_onward'][index]['price']);
+        prices.push(schedules['schedules_onward'][index]['price']);
       }
       for (let index in schedules['schedules_return']) {
-        prices.add(schedules['schedules_return'][index]['price']);
+        prices.push(schedules['schedules_return'][index]['price']);
       }
+      prices.sort()
 
-      let min_price = Math.min(...prices);
+      let min_price = prices[0];
       min_price = min_price - (min_price % 100)
-      let max_price = Math.max(...prices);
+      let max_price = prices[prices.length - 1];
       max_price = max_price - (max_price % 100) + 100
       // Slider for price
       $("#price-slider").slider({
@@ -413,7 +397,8 @@ $(document).on('submit', '.filter-form', function(event) {
     let form_data_arr = form_data_str.split("&");
     let filter_dict = {};
     for (field in form_data_arr) {
-      let [field_name, field_value] = form_data_arr[field].split("=");
+      let field_name = form_data_arr[field].split("=")[0];
+      let field_value = form_data_arr[field].split("=")[1];
       // For multiple `key=value` with same key, store values as an array
       if (filter_dict.hasOwnProperty(field_name)) {
         if (Array.isArray(filter_dict[field_name])) {

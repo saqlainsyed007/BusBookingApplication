@@ -82,13 +82,40 @@
       </div>
     </div>
   </div>
-  <!-- A static template to display when there are no buses found -->
+  <!-- A template to display when there are no buses found -->
   <div id="empty-schedule-template" class="no-buses hide">
     <p class="no-buses-title">Opps! No Buses were found</p>
     <p>
       There are no buses with current filters found in this route for the selected
       date of journey. Please modify your filter or try a different route or date.
     </p>
+  </div>
+  <!-- A template to display schedule items -->
+  <div id="search-result-row" class="row results-row hide">
+    <div class="col-md-6 results-flex-container">
+      <div class="results-flex-item col-md-6">
+        <p class="brand-name">${brand}</p>
+        <p class="bus-type">${type} | ${ac}</p>
+      </div>
+      <div class="results-flex-item col-md-6">
+        <p class="timings">${onward_time} -> ${return_time}</p>
+        <p class="travel-time">${travel_time}</p>
+      </div>
+    </div>
+    <div class="col-md-6 results-flex-container">
+      <div class="results-flex-item col-md-4">
+        <p class="rating">
+          ${rating_html}
+        </p>
+      </div>
+      <div class="results-flex-item col-md-4">
+        <p class="seats">${seats} seats</p>
+      </div>
+      <div class="results-flex-item col-md-4">
+        <p class="price">INR ${price}</p>
+        <button class="view-seats">View Seats</button>
+      </div>
+    </div>
   </div>
 {% endblock %}
 

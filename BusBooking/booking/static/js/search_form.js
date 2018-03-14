@@ -48,7 +48,7 @@ $(document).on('change', '.onward-date', function(event) {
   $('.return-date').datepicker("option", "minDate", get_date_obj_from_str(event.target.value));
 });
 
-$(document).on('change', '.from-location-input, .to-location-input', function(event) {
+$(document).on('change', '.from-location-input,.to-location-input', function(event) {
   let locations = JSON.parse(sessionStorage.getItem('locations'));
   let location_input_class , sibling_location_input_class;
   // Identify selected location field
@@ -71,7 +71,7 @@ $(document).on('change', '.from-location-input, .to-location-input', function(ev
   }
 });
 
-$(document).on('change', '.from-location-input, .to-location-input, .onward-date, .return-date', function(event) {
+$(document).on('change', '.from-location-input,.to-location-input,.onward-date,.return-date', function(event) {
   // Set input change flag. API call need not be made unless input has changed.
   sessionStorage.setItem('input-changed', true)
 });
