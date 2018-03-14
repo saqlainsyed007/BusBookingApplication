@@ -1,5 +1,4 @@
-# import re
-# from django.db.models import Q
+import datetime
 from django.shortcuts import render
 from rest_framework import (
     generics,
@@ -33,8 +32,7 @@ class LocationListAPIView(generics.ListAPIView):
 # Hence using generics may be against the standards
 class ScheduleSearchAPIView(APIView):
 
-    def post(self, request, format=None):
-        request_data = request.data
+    def validate(self, request_data):
         if (
             'from_location' not in request_data or
             not request_data['from_location'] or
@@ -43,11 +41,47 @@ class ScheduleSearchAPIView(APIView):
             'onward_date' not in request_data or
             not request_data['onward_date']
         ):
-            return Response(
-                "Invalid Request. Please ensure from_location, to_location " +
-                "and onward_date are present in the request",
-                status=status.HTTP_400_BAD_REQUEST
+            return (
+                False,
+                Response(
+                    "Invalid Request. Please ensure from_location, to_location " +
+                    "and onward_date are present in the request",
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             )
+
+        field_error_dict = {}
+        if not Location.objects.filter(name=request_data['from_location']):
+            field_error_dict['from_location'] = "From location not found"
+        if not Location.objects.filter(name=request_data['to_location']):
+            field_error_dict['to_location'] = "To location not found"
+        if request_data['to_location'] == request_data['from_location']:
+            field_error_dict['to_location'] = "To location cannot be same as From location"
+        if parse_date(request_data['onward_date']) < datetime.datetime.now().date():
+            field_error_dict['onward_date'] = "Onward date cannot be Past"
+        if 'return_date' in request_data:
+            if parse_date(request_data['return_date']) < datetime.datetime.now().date():
+                field_error_dict['return_date'] = "Return date cannot be Past"
+            elif parse_date(request_data['return_date']) < parse_date(request_data['onward_date']):
+                field_error_dict['return_date'] = "Return date cannot be before onward date"
+        if field_error_dict:
+            status_code = status.HTTP_404_NOT_FOUND
+            if "onward_date" in field_error_dict or "return_date" in field_error_dict:
+                status_code = status.HTTP_400_BAD_REQUEST
+            return (
+                False,
+                Response(
+                    field_error_dict,
+                    status=status_code
+                )
+            )
+        return (True, "")
+
+    def post(self, request, format=None):
+        request_data = request.data
+        validated, error_response = self.validate(request_data)
+        if not validated:
+            return error_response
         # Retrieve journey start date schedule list
         filter_dict_onward = {
             'from_location__name': request_data['from_location'],
