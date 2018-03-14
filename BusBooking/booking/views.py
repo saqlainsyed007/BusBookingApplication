@@ -1,4 +1,5 @@
 import datetime
+# from django.db import connection, reset_queries
 from django.db.models import prefetch_related_objects
 from django.shortcuts import render
 from rest_framework import (
@@ -83,6 +84,7 @@ class ScheduleSearchAPIView(APIView):
         return (True, "")
 
     def post(self, request, format=None):
+        # reset_queries()
         request_data = request.data
         validated, error_response = self.validate(request_data)
         if not validated:
@@ -112,5 +114,6 @@ class ScheduleSearchAPIView(APIView):
             prefetch_related_objects(schedules_return_objects, 'from_location', 'to_location', 'bus', 'bus__brand')
             schedules_return_data = ScheduleSerializer(schedules_return_objects, many=True).data
             result['schedules_return'] = schedules_return_data
+        # print(len(connection.queries))
 
         return Response(result)
