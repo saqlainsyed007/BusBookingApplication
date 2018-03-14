@@ -60,6 +60,10 @@
   border-radius: 20px;
 }
 
+ul.ui-autocomplete {
+  max-height: 300px;
+  overflow-y: scroll;
+}
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
 /* IE10+ CSS styles go here */
