@@ -1,4 +1,5 @@
 import datetime
+from django.db.models import prefetch_related_objects
 from django.shortcuts import render
 from rest_framework import (
     generics,
@@ -93,6 +94,7 @@ class ScheduleSearchAPIView(APIView):
             'departure_time__contains': parse_date(request_data['onward_date'])
         }
         schedules_onward_objects = Schedule.objects.filter(**filter_dict_onward)
+        prefetch_related_objects(schedules_onward_objects, 'from_location', 'to_location', 'bus', 'bus__brand')
         schedules_onward_data = ScheduleSerializer(schedules_onward_objects, many=True).data
         result = {
             'schedules_onward': schedules_onward_data,
@@ -107,6 +109,7 @@ class ScheduleSearchAPIView(APIView):
                 'arrival_time__contains': parse_date(request_data['return_date'])
             }
             schedules_return_objects = Schedule.objects.filter(**filter_dict_return)
+            prefetch_related_objects(schedules_return_objects, 'from_location', 'to_location', 'bus', 'bus__brand')
             schedules_return_data = ScheduleSerializer(schedules_return_objects, many=True).data
             result['schedules_return'] = schedules_return_data
 
