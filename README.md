@@ -41,4 +41,10 @@ Go to `http://localhost:8000/booking/` and search for some buses. A `DummyLocati
 Go to `http://localhost:8000/admin/` and login with username `admin` and password `changeme` to view all objects that have been created and validate results in the UI.
 
 
-**Note**: Some features may not work in Internet Explorer and Microsoft Edge.
+**Note**: 
+
+
+Some features may not work in Internet Explorer and Microsoft Edge.
+
+
+CDNs do not load sometimes. Please hard refresh untill all CDNs are loaded and there are no 403, 404 errors in the browser console
