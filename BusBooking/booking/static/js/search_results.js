@@ -112,14 +112,15 @@ var get_time_diff_string = function(start, stop) {
   start = new Date(start);
   stop = new Date(stop);
   let time_diff = (stop - start);
-  let num_seconds = parseInt(time_diff % (1000*60) / 1000);
+  // let num_seconds = parseInt(time_diff % (1000*60) / 1000);
   let num_minutes = parseInt((time_diff % (1000*60*60)) / (1000*60));
   let num_hours = parseInt((time_diff % (1000*60*60*24)) / (1000*60*60));
   let num_days = parseInt(time_diff % (1000*60*60*24*7) / (1000*60*60*24));
   let travel_time = '';
-  if (num_seconds) { travel_time = num_seconds + 's ' + travel_time; }
-  if (num_minutes) { travel_time = num_minutes + 'm ' + travel_time; }
-  if (num_hours) { travel_time = num_hours + 'h ' + travel_time; }
+  // if (num_seconds) { travel_time = num_seconds + 's ' + travel_time; }
+  let extra_hour = 0;
+  if (num_minutes > 30) { extra_hour = 1 }
+  if (num_hours) { travel_time = (num_hours + extra_hour) + 'h '; }
   if (num_days) { travel_time = num_days + 'd ' + travel_time; }
   return travel_time;
 }
@@ -152,8 +153,8 @@ var get_search_result_item = function(brand, type, ac_available, onward_date, re
   search_result_item.find('.timings').text(onward_time + " -> " + return_time)
   search_result_item.find('.travel-time').text(travel_time)
   search_result_item.find('.rating').html(rating_html)
-  search_result_item.find('.seats').text(seats)
-  search_result_item.find('.price').text(price)
+  search_result_item.find('.seats').text(seats + " seats")
+  search_result_item.find('.price').text("INR " + price)
   search_result_item.removeClass('hide')
 
   return search_result_item;

@@ -163,11 +163,11 @@ def run():
         from_location = random.choice(locations)
         to_location = random.choice(list(filter(lambda x: x != from_location, locations)))
         today = datetime.datetime.now().replace(tzinfo=datetime.timezone.utc)
-        three_days_from_now = today + datetime.timedelta(hours=72)
-        departure_time = random_date(today, three_days_from_now)
+        ten_days_from_now = today + datetime.timedelta(hours=240)
+        departure_time = random_date(today, ten_days_from_now)
         # Extra 10 hours for arrival time so the there is more room for choice
         # in case departure time is close to upper limit.
-        arrival_time = random_date(departure_time, three_days_from_now + datetime.timedelta(hours=10))
+        arrival_time = random_date(departure_time, ten_days_from_now + datetime.timedelta(hours=10))
         price = random.randint(1100, 6000)
         schedule_objects.append(
             Schedule(
@@ -184,6 +184,7 @@ def run():
             Schedule.objects.bulk_create(schedule_objects)
             schedule_objects = []
     Schedule.objects.bulk_create(schedule_objects)
+    # DummyLocation for empty schedule test case
     Schedule.objects.filter(from_location__name="DummyLocation").delete()
     Schedule.objects.filter(to_location__name="DummyLocation").delete()
     print("Data Seed Completed")

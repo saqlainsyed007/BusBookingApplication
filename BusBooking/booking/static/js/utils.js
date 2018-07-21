@@ -27,6 +27,5 @@ var set_error_message = function(name, message) {
     Set error message to the respective input's error element
   */
 
-  $('input[name="' + name + '"]').siblings('.error')
-  .text(message).show();
+  $('[name="' + name + '"]').siblings('.error').text(message).show();
 }
