@@ -4,26 +4,49 @@
 This Application requires `Python3 and Pip3`
 
 
-Python 3 can be downloaded from https://www.python.org/downloads/. if you are using python 3.4 or higher, pip3 is already installed. Otherwise download and install manually from https://pip.pypa.io/en/stable/installing/.
+Python 3 can be downloaded from https://www.python.org/downloads/. If you are using python 3.4 or higher, pip3 is already installed. Otherwise download and install manually from https://pip.pypa.io/en/stable/installing/.
 
 
-Use of virtual environment is recommended. https://virtualenvwrapper.readthedocs.io/en/latest/install.html.
+Use of virtual environment is recommended. Python 3 comes with built in mechanism to create virtualenv. The documentation can be found at https://docs.python.org/3/library/venv.html
+
+### Steps to create Virtual Env
+
+1. Create a master virtual env directory. This directory could be used to store all your virtual envs.
+
+    `mkdir ~/my_virtual_envs`
+    
+2. Within your master virtual env directory, create a directory to store your project virtual env. This directory will contain your installations and the script to activate your virtualenv.
+
+    `mkdir ~/my_virtual_envs/bus_booking`
+    
+3. Create virtual env
+
+    `python3 -m venv bus_booking ENV_DIR ~/virtualenvs/bus_booking/`
+    
+    **Note** that `~/virtualenvs/bus_booking/` is the path to your project virtual env directory.
+    
+4. Activate virtual env
+
+    `source ~/virtualenvs/bus_booking/bin/activate`
 
 
-### Download
+### Download Application
+
+Please download this in a location other than you virtual envs directory
+
 ```
 git clone https://github.com/saqlainsyed007/BusBookingApplication.git
 
 cd BusBookingApplication/BusBooking/
 ```
 
-### Install
+### Install Application
 ```
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
-python manage.py migrate
+python3 manage.py migrate
 
-python manage.py runscript seed_data
+python3 manage.py runscript seed_data
 ```
 
 Seed data creates dummy schedules from today to three days from today.
@@ -31,7 +54,7 @@ Seed data creates dummy schedules from today to three days from today.
 
 ### Run Application
 ```
-python manage.py runserver 0:8000
+python3 manage.py runserver 0:8000
 ```
 
 ### View Application
